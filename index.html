@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Formulaire de Visite</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 20px; 
+      max-width: 600px; 
+      margin: 0 auto;
+      background-color: #f5f5f5;
+    }
+    
+    .form-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    label { 
+      display: block; 
+      margin-top: 15px; 
+      font-weight: bold;
+      color: #555;
+    }
+    
+    input, select { 
+      width: 100%; 
+      padding: 12px; 
+      margin-top: 5px; 
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+    
+    button { 
+      margin-top: 25px; 
+      padding: 12px 30px; 
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    
+    button:hover {
+      background-color: #45a049;
+    }
+    
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    
+    #confirmation {
+      display: none;
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #e8f5e8;
+      border-left: 5px solid #4CAF50;
+      color: #2e7d32;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    
+    .error {
+      color: #d32f2f;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .required {
+      color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Formulaire de Visite</h2>
+    <form id="visitForm">
+      <label for="student">Nom de l'étudiant <span class="required">*</span></label>
+      <select id="student" name="student" required>
+        <option value="">Choisissez un étudiant </option>
+        <option value="Die Debora">Die Debora</option>
+        <option value="Kouadio Frejus">Kouadio Frejus</option>
+      </select>
+      <div class="error" id="student-error">Veuillez sélectionner un étudiant.</div>
+
+      <label for="visitor">Nom et prénom du visiteur <span class="required">*</span></label>
+      <input type="text" id="visitor" name="visitor" class="required" />
+      <div class="error" id="visitor-error">Veuillez saisir le nom du visiteur.</div>
+
+      <label for="reason">Objet de la visite <span class="required">*</span></label>
+      <input type="text" id="reason" name="reason" required placeholder="Ex: Visite familiale, rendez-vous médical..." />
+      <div class="error" id="reason-error">Veuillez préciser l'objet de la visite.</div>
+
+      <label for="phone">Numéro de téléphone <span class="required">*</span></label>
+      <input type="tel" id="phone" name="phone" class="required" pattern="[0-9]{10}" />
+      <div class="error" id="phone-error">Veuillez saisir un numéro de téléphone valide (10 chiffres).</div>
+
+      <button type="submit" id="submitBtn">Envoyer la demande</button>
+    </form>
+
+    <div id="confirmation">
+      ✅ Merci ! Votre demande a bien été enregistrée.<br />
+      L'étudiant sera informé de votre présence.
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('visitForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Validation des champs
+      const student = document.getElementById('student').value;
+      const visitor = document.getElementById('visitor').value.trim();
+      const reason = document.getElementById('reason').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      let isValid = true;
+
+      // Réinitialiser les erreurs
+      document.querySelectorAll('.error').forEach(error => {
+        error.style.display = 'none';
+      });
+
+      // Validation étudiant
+      if (!student) {
+        document.getElementById('student-error').style.display = 'block';
+        isValid = false;
+      }
+
+      // Validation visiteur
+      if (!visitor) {
+        document.getElementById('visitor-error').style.display = 'block';
+        isValid = false;
+      }
+
+      // Validation objet
+      if (!reason) {
+        document.getElementById('reason-error').style.display = 'block';
+        isValid = false;
+      }
+
+      // Validation téléphone
+      const phoneRegex = /^[0-9]{10}$/;
+      if (!phone || !phoneRegex.test(phone)) {
+        document.getElementById('phone-error').style.display = 'block';
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      // Désactiver le bouton pendant l'envoi
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Envoi en cours...';
+
+      // Envoi vers ton Apps Script
+      const url = "https://script.google.com/macros/s/AKfycbwQ8LxgaBwWnehVVhUup_gsC9_j2vAaY2MC85bhLhz2TGzAT1UUezGb5v32yJ4pkC_W/exec";
+
+      const data = {
+        student,
+        visitor,
+        reason,
+        phone,
+        date: new Date().toLocaleString()
+      };
+
+      fetch(url, {
+        method: "POST",
+        mode: "no-cors",  // no-cors car Apps Script ne gère pas les CORS
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      }).then(() => {
+        document.getElementById('confirmation').style.display = 'block';
+        this.reset();
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Envoyer la demande';
+
+        setTimeout(() => {
+          document.getElementById('confirmation').style.display = 'none';
+        }, 5000);
+      }).catch(err => {
+        alert("Erreur lors de l'envoi.");
+        console.error(err);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Envoyer la demande';
+      });
+    });
+
+    // Validation en temps réel pour le téléphone
+    document.getElementById('phone').addEventListener('input', function(e) {
+      const value = e.target.value;
+      const phoneRegex = /^[0-9]{10}$/;
+      
+      if (value && !phoneRegex.test(value)) {
+        e.target.style.borderColor = '#d32f2f';
+      } else {
+        e.target.style.borderColor = '#ddd';
+      }
+    });
+  </script>
+</body>
+</html>
