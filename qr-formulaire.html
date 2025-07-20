@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Code - Accès Formulaire</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background-color: #f9f9f9;
+    }
+    img {
+      width: 250px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    .info {
+      margin-top: 20px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Scanner le QR Code</h1>
+  <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://mn-site-web.netlify.app/formulaire.html" alt="QR Code">
+  <div class="info">
+    <p>Ce QR code mène directement au formulaire de visite.</p>
+  </div>
+  <a href="formulaire.html" class="btn">Accéder au formulaire</a>
+</body>
+</html>
+
